@@ -39,21 +39,33 @@ const data = [
         title: "Olga",
     },
 ];
-const handler = async () => {
+const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
+    "Content-Type": "application/json",
+};
+const handler = async (event) => {
+    var _a;
     try {
+        const id = (_a = event.pathParameters) === null || _a === void 0 ? void 0 : _a.id;
+        const item = data.find((product) => product.id === id);
+        if (!item) {
+            return {
+                statusCode: 404,
+                headers,
+                body: JSON.stringify({ message: "Product not found" }),
+            };
+        }
         return {
             statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Credentials": true,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
+            headers,
+            body: JSON.stringify(item),
         };
     }
     catch (error) {
         return {
             statusCode: 500,
+            headers,
             body: JSON.stringify({ message: "Internal server error", error }),
         };
     }

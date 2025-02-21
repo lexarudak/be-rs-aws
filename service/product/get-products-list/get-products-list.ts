@@ -1,39 +1,39 @@
 const data = [
 	{
-		description: "Valera",
-		id: "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+		description: "Short Product Description",
+		id: "1",
 		price: 24,
-		title: "Product One",
+		title: "Valera",
 	},
 	{
 		description: "Short Product Description",
-		id: "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
+		id: "2",
 		price: 15,
-		title: "Product Title",
+		title: "Natalia",
 	},
 	{
 		description: "Short Product Description",
-		id: "7567ec4b-b10c-48c5-9345-fc73c48a80a3",
+		id: "3",
 		price: 23,
-		title: "Product",
+		title: "Marina",
 	},
 	{
 		description: "Short Product Description",
-		id: "7567ec4b-b10c-48c5-9345-fc73348a80a1",
+		id: "4",
 		price: 15,
-		title: "Product Test",
+		title: "Zinaida",
 	},
 	{
 		description: "Short Product Description",
-		id: "7567ec4b-b10c-48c5-9445-fc73c48a80a2",
+		id: "5",
 		price: 23,
-		title: "Product 2",
+		title: "Irina",
 	},
 	{
 		description: "Short Product Description",
-		id: "7567ec4b-b10c-45c5-9345-fc73c48a80a1",
+		id: "6",
 		price: 15,
-		title: "Product Name",
+		title: "Olga",
 	},
 ];
 

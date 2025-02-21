@@ -19,6 +19,19 @@ export class BackStack extends cdk.Stack {
 			}
 		);
 
+		const getProductByIdFunction = new lambda.Function(
+			this,
+			"getProductByIdFunction",
+			{
+				runtime: lambda.Runtime.NODEJS_22_X,
+				handler: "get-product-by-id.handler",
+				code: lambda.Code.fromAsset(
+					"../../service/product/dist/get-product-by-id"
+				),
+				functionName: "getProductById",
+			}
+		);
+
 		const api = new apigateway.RestApi(this, "productsApi", {
 			restApiName: "Products Service",
 			defaultCorsPreflightOptions: {
@@ -34,9 +47,18 @@ export class BackStack extends cdk.Stack {
 		});
 
 		const products = api.root.addResource("products");
+
 		products.addMethod(
 			"GET",
 			new apigateway.LambdaIntegration(getProductsFunction)
+		);
+
+		const product = api.root.addResource("product");
+		const productById = product.addResource("{id}");
+
+		productById.addMethod(
+			"GET",
+			new apigateway.LambdaIntegration(getProductByIdFunction)
 		);
 	}
 }
