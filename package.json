@@ -6,7 +6,8 @@
   "scripts": {
     "deploy": "cd infra/cdk && cdk deploy",
     "build:product": "cd service/product && npm run build",
-    "swagger": "cd service/product && node swagger.js"
+    "swagger": "cd service/product && node swagger.js",
+    "test": "cd service/product && npm run test"
   },
   "repository": {
     "type": "git",
