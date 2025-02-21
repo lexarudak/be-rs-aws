@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-
+    "deploy": "cd infra/cdk && cdk deploy",
+    "build:product": "cd service/product && npm run build"
   },
   "repository": {
     "type": "git",
