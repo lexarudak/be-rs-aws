@@ -37,27 +37,8 @@ const data = [
 	},
 ];
 
-interface Product {
-	description: string;
-	id: string;
-	price: number;
-	title: string;
-}
-
 interface Event {
-	body: string;
-	headers: { [key: string]: string };
-	httpMethod: string;
-	isBase64Encoded: boolean;
-	path: string;
-	queryStringParameters: { [key: string]: string } | null;
 	pathParameters: { [key: string]: string } | null;
-}
-
-interface Response {
-	statusCode: number;
-	headers: { [key: string]: string | boolean };
-	body: string;
 }
 
 const headers = {
@@ -66,10 +47,10 @@ const headers = {
 	"Content-Type": "application/json",
 };
 
-export const handler = async (event: Event): Promise<Response> => {
+export const handler = async (event: Event) => {
 	try {
 		const id = event.pathParameters?.id;
-		const item = data.find((product: Product) => product.id === id);
+		const item = data.find((product) => product.id === id);
 
 		if (!item) {
 			return {

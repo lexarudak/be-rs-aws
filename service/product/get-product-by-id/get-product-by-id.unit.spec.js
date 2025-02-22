@@ -43,7 +43,7 @@ describe("get-product-by-id", () => {
 	});
 
 	it("should return 500 when an error occurs", async () => {
-		const result = await handler(undefined as any);
+		const result = await handler(undefined);
 
 		expect(result.statusCode).toBe(500);
 		expect(JSON.parse(result.body)).toEqual({

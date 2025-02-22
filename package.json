@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install:all": "npm install && cd infra/cdk && npm install && cd ../../service/product && npm install",
     "deploy": "cd infra/cdk && cdk deploy",
-    "build:product": "cd service/product && npm run build",
+    "build": "cd service/product && npm run build",
     "swagger": "cd service/product && node swagger.js",
     "test": "cd service/product && npm run test"
   },
