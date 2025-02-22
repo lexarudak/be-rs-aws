@@ -1,4 +1,4 @@
-const data = [
+const productsList = [
 	{
 		description: "Short Product Description",
 		id: "1",
@@ -37,14 +37,4 @@ const data = [
 	},
 ];
 
-export const handler = async () => {
-	return {
-		statusCode: 200,
-		headers: {
-			"Access-Control-Allow-Origin": "*",
-			"Access-Control-Allow-Credentials": true,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(data),
-	};
-};
+export default productsList;

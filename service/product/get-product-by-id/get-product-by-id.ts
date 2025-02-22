@@ -52,9 +52,6 @@ interface Event {
 	path: string;
 	queryStringParameters: { [key: string]: string } | null;
 	pathParameters: { [key: string]: string } | null;
-	stageVariables: { [key: string]: string } | null;
-	requestContext: any;
-	resource: string;
 }
 
 interface Response {

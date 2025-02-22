@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handler = void 0;
-const data = [
+const productsList = [
     {
         description: "Short Product Description",
         id: "1",
@@ -39,15 +38,4 @@ const data = [
         title: "Olga",
     },
 ];
-const handler = async () => {
-    return {
-        statusCode: 200,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": true,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    };
-};
-exports.handler = handler;
+exports.default = productsList;
