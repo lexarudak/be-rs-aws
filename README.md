@@ -5,6 +5,8 @@ Backend RS repo for AWS
 
 FE deploy link: https://d24m7wg51rffak.cloudfront.net/
 
+FE pr: https://github.com/lexarudak/nodejs-aws-shop-react/pull/1
+
 Lambda-products-list: https://g0z8a0y8yh.execute-api.eu-north-1.amazonaws.com/prod/products
 
 Lambda-product-by-id: https://g0z8a0y8yh.execute-api.eu-north-1.amazonaws.com/prod/product/1
