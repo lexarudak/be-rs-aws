@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Products API
+  description: API for managing product information.
+  version: 1.0.0
+
+servers:
+  - url: 'https://g0z8a0y8yh.execute-api.eu-north-1.amazonaws.com/prod'
+    description: Local server
+
+paths:
+  /products:
+    get:
+      summary: Get a list of all products
+      operationId: getProducts
+      responses:
+        '200':
+          description: Successfully retrieved list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal server error
+
+  /product/{id}:
+    get:
+      summary: Get a product by its ID
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the product to retrieve
+      responses:
+        '200':
+          description: Successfully retrieved product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductNotFound'
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - title
+        - price
+        - description
+      properties:
+        id:
+          type: string
+          example: '1'
+        title:
+          type: string
+          example: 'Valera'
+        price:
+          type: number
+          format: double
+          example: 50
+        description:
+          type: string
+          example: 'High-quality wool sweater'
+    ProductNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Product not found'
