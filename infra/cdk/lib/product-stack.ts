@@ -55,8 +55,8 @@ export class BackStack extends Stack {
 					forceDockerBundling: false,
 				},
 				environment: {
-					PRODUCTS_TABLE_NAME: "products",
-					STOCKS_TABLE_NAME: "stocks",
+					PRODUCTS_TABLE_NAME: DYNAMO_DB_TABLES.PRODUCTS,
+					STOCKS_TABLE_NAME: DYNAMO_DB_TABLES.STOCKS,
 				},
 			}
 		);

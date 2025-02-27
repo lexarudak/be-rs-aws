@@ -1,4 +1,5 @@
 import { fetchAllItems } from "../helpers/fetch-all-items/fetch-all-items";
+import { DYNAMO_DB_TABLES } from "../utils/constants";
 
 const headers = {
 	"Access-Control-Allow-Origin": "*",
@@ -9,8 +10,8 @@ const headers = {
 export const handler = async () => {
 	try {
 		const [productsData, stocksData] = await Promise.all([
-			fetchAllItems("products"),
-			fetchAllItems("stocks"),
+			fetchAllItems(DYNAMO_DB_TABLES.PRODUCTS),
+			fetchAllItems(DYNAMO_DB_TABLES.STOCKS),
 		]);
 
 		if (!productsData || !stocksData) {
