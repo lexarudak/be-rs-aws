@@ -1,13 +1,11 @@
 import { fetchAllItems } from "../helpers/fetch-all-items/fetch-all-items";
-import { DYNAMO_DB_TABLES } from "../utils/constants";
+import { logger } from "../helpers/logger/logger";
+import { DYNAMO_DB_TABLES, headers } from "../utils/constants";
+import { RESPONSE } from "../utils/responses";
 
-const headers = {
-	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Credentials": true,
-	"Content-Type": "application/json",
-};
+export const handler = async (event: unknown) => {
+	logger().incomingLog(event);
 
-export const handler = async () => {
 	try {
 		const [productsData, stocksData] = await Promise.all([
 			fetchAllItems(DYNAMO_DB_TABLES.PRODUCTS),
@@ -38,10 +36,6 @@ export const handler = async () => {
 			body: JSON.stringify(data),
 		};
 	} catch (error) {
-		return {
-			statusCode: 500,
-			headers,
-			body: JSON.stringify({ message: "Internal Server Error" }),
-		};
+		return RESPONSE.SERVER_ERROR;
 	}
 };

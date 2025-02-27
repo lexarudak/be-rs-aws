@@ -21,6 +21,26 @@ export class BackStack extends Stack {
 			DYNAMO_DB_TABLES.STOCKS
 		);
 
+		const createProductFunction = new NodejsFunction(
+			this,
+			"createProductFunction",
+			{
+				runtime: Runtime.NODEJS_22_X,
+				entry: "../../service/product/create-product/create-product.ts",
+				handler: "handler",
+				memorySize: 128,
+				timeout: Duration.seconds(30),
+				bundling: {
+					externalModules: ["aws-sdk"],
+					forceDockerBundling: false,
+				},
+				environment: {
+					PRODUCTS_TABLE_NAME: DYNAMO_DB_TABLES.PRODUCTS,
+					STOCKS_TABLE_NAME: DYNAMO_DB_TABLES.STOCKS,
+				},
+			}
+		);
+
 		const getProductsFunction = new NodejsFunction(
 			this,
 			"getProductsFunction",
@@ -63,9 +83,11 @@ export class BackStack extends Stack {
 
 		productsTable.grantReadData(getProductsFunction);
 		productsTable.grantReadData(getProductByIdFunction);
+		productsTable.grantWriteData(createProductFunction);
 
 		stocksTable.grantReadData(getProductsFunction);
 		stocksTable.grantReadData(getProductByIdFunction);
+		stocksTable.grantWriteData(createProductFunction);
 
 		const api = new apigateway.RestApi(this, "productsApi", {
 			restApiName: "Products Service",
@@ -86,6 +108,11 @@ export class BackStack extends Stack {
 		products.addMethod(
 			"GET",
 			new apigateway.LambdaIntegration(getProductsFunction)
+		);
+
+		products.addMethod(
+			"POST",
+			new apigateway.LambdaIntegration(createProductFunction)
 		);
 
 		const product = api.root.addResource("product");

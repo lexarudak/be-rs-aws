@@ -1,14 +1,14 @@
 import { fetchItemById } from "../helpers/fetch-item-by-id/fetch-item-by-id";
+import { logger } from "../helpers/logger/logger";
 import { DYNAMO_DB_TABLES, headers } from "../utils/constants";
 import { RESPONSE } from "../utils/responses";
+import { HandlerEvent } from "../utils/types";
 
-interface Event {
-	pathParameters: { [key: string]: string } | null;
-}
+export const handler = async (event: HandlerEvent) => {
+	logger().incomingLog(event, event?.pathParameters);
 
-export const handler = async (event: Event) => {
 	try {
-		const id = event.pathParameters?.id;
+		const id = event?.pathParameters?.id;
 
 		if (!id) {
 			return RESPONSE.NOT_FOUND;
