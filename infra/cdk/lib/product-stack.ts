@@ -1,36 +1,71 @@
-import * as cdk from "aws-cdk-lib";
+import { Stack, StackProps, Duration, CfnOutput } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import * as lambda from "aws-cdk-lib/aws-lambda";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
-export class BackStack extends cdk.Stack {
-	constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
+import { DYNAMO_DB_TABLES } from "../utils/constants";
+
+export class BackStack extends Stack {
+	constructor(scope: Construct, id: string, props?: StackProps) {
 		super(scope, id, props);
 
-		const getProductsFunction = new lambda.Function(
+		const productsTable = Table.fromTableName(
+			this,
+			"ProductsTable",
+			DYNAMO_DB_TABLES.PRODUCTS
+		);
+		const stocksTable = Table.fromTableName(
+			this,
+			"StocksTable",
+			DYNAMO_DB_TABLES.STOCKS
+		);
+
+		const getProductsFunction = new NodejsFunction(
 			this,
 			"getProductsFunction",
 			{
-				runtime: lambda.Runtime.NODEJS_22_X,
-				handler: "get-products-list.handler",
-				code: lambda.Code.fromAsset(
-					"../../service/product/dist/get-products-list"
-				),
-				functionName: "getProductsList",
+				runtime: Runtime.NODEJS_22_X,
+				entry: "../../service/product/get-products-list/get-products-list.ts",
+				handler: "handler",
+				memorySize: 128,
+				timeout: Duration.seconds(30),
+				bundling: {
+					externalModules: ["aws-sdk"],
+					forceDockerBundling: false,
+				},
+				environment: {
+					PRODUCTS_TABLE_NAME: DYNAMO_DB_TABLES.PRODUCTS,
+					STOCKS_TABLE_NAME: DYNAMO_DB_TABLES.STOCKS,
+				},
 			}
 		);
 
-		const getProductByIdFunction = new lambda.Function(
+		const getProductByIdFunction = new NodejsFunction(
 			this,
 			"getProductByIdFunction",
 			{
-				runtime: lambda.Runtime.NODEJS_22_X,
-				handler: "get-product-by-id.handler",
-				code: lambda.Code.fromAsset(
-					"../../service/product/dist/get-product-by-id"
-				),
-				functionName: "getProductById",
+				runtime: Runtime.NODEJS_22_X,
+				handler: "handler",
+				entry: "../../service/product/get-product-by-id/get-product-by-id.ts",
+				memorySize: 128,
+				timeout: Duration.seconds(30),
+				bundling: {
+					externalModules: ["aws-sdk"],
+					forceDockerBundling: false,
+				},
+				environment: {
+					PRODUCTS_TABLE_NAME: "products",
+					STOCKS_TABLE_NAME: "stocks",
+				},
 			}
 		);
+
+		productsTable.grantReadData(getProductsFunction);
+		productsTable.grantReadData(getProductByIdFunction);
+
+		stocksTable.grantReadData(getProductsFunction);
+		stocksTable.grantReadData(getProductByIdFunction);
 
 		const api = new apigateway.RestApi(this, "productsApi", {
 			restApiName: "Products Service",
@@ -60,5 +95,10 @@ export class BackStack extends cdk.Stack {
 			"GET",
 			new apigateway.LambdaIntegration(getProductByIdFunction)
 		);
+
+		new CfnOutput(this, "ApiUrl", {
+			value: api.url,
+			description: "API Gateway URL",
+		});
 	}
 }

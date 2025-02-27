@@ -2,6 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DYNAMO_DB_REGION } from '../../utils/constants.js';
 
+
 const region = DYNAMO_DB_REGION
 
 const dynamoDBClient = new DynamoDBClient({
