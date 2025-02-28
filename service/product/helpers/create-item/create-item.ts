@@ -1,28 +1,27 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import {
+	DynamoDBDocumentClient,
+	TransactWriteCommand,
+	TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { REGIONS } from "../../utils/constants";
-import { ProductItem, StockItem } from "../../utils/types";
 
 const region = REGIONS.DYNAMO_DB;
 
 const dynamoDBClient = new DynamoDBClient({ region });
 const docClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
-export const createItem = async (
-	TableName: string,
-	Item: ProductItem | StockItem
+export const transactWrite = async (
+	transactWriteCommandInput: TransactWriteCommandInput
 ) => {
 	try {
-		const data = await docClient.send(
-			new PutCommand({
-				TableName,
-				Item,
-			})
+		const { $metadata } = await docClient.send(
+			new TransactWriteCommand(transactWriteCommandInput)
 		);
-		console.log("Item added:", data);
-		return Item;
+		console.log("Transaction Complete:", $metadata);
+		return true;
 	} catch (error) {
-		console.error("Error during add:", error);
-		throw error;
+		console.error("Transaction Error:", error);
+		return false;
 	}
 };

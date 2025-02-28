@@ -1,9 +1,9 @@
-import { createItem } from "../helpers/create-item/create-item";
+import { transactWrite } from "../helpers/create-item/create-item";
 import { getValidCreateItem } from "../helpers/create-item/validation";
 import { logger } from "../helpers/logger/logger";
 import { DYNAMO_DB_TABLES, headers } from "../utils/constants";
 import { RESPONSE } from "../utils/responses";
-import { HandlerEvent, StockItem } from "../utils/types";
+import { HandlerEvent } from "../utils/types";
 import { v4 as uuid } from "uuid";
 
 export const handler = async (event: HandlerEvent) => {
@@ -15,15 +15,35 @@ export const handler = async (event: HandlerEvent) => {
 
 		const id = uuid();
 
-		const [productItem, stocksItem] = await Promise.all([
-			createItem(DYNAMO_DB_TABLES.PRODUCTS, { title, description, price, id }),
-			createItem(DYNAMO_DB_TABLES.STOCKS, {
-				product_id: id,
-				count,
-			}),
-		]);
+		const Item = {
+			id,
+			title,
+			description,
+			price,
+		};
 
-		if (!productItem || !stocksItem) {
+		const productParams = {
+			Put: {
+				TableName: DYNAMO_DB_TABLES.PRODUCTS,
+				Item,
+			},
+		};
+
+		const stocksParams = {
+			Put: {
+				TableName: DYNAMO_DB_TABLES.STOCKS,
+				Item: {
+					product_id: id,
+					count,
+				},
+			},
+		};
+
+		const isTransactionSuccess = await transactWrite({
+			TransactItems: [productParams, stocksParams],
+		});
+
+		if (!isTransactionSuccess) {
 			return RESPONSE.SERVER_ERROR;
 		}
 
@@ -31,8 +51,8 @@ export const handler = async (event: HandlerEvent) => {
 			statusCode: 201,
 			headers,
 			body: JSON.stringify({
-				...productItem,
-				count: (stocksItem as StockItem).count,
+				...Item,
+				count,
 			}),
 		};
 	} catch (error) {
