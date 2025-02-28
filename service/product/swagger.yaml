@@ -24,6 +24,26 @@ paths:
                   $ref: '#/components/schemas/Product'
         '500':
           description: Internal server error
+    post:
+      summary: Add a new product
+      operationId: addProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProduct'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
 
   /product/{id}:
     get:
@@ -75,6 +95,27 @@ components:
         description:
           type: string
           example: 'High-quality wool sweater'
+    NewProduct:
+      type: object
+      required:
+        - title
+        - description
+        - price
+        - count
+      properties:
+        title:
+          type: string
+          example: 'Valera'
+        description:
+          type: string
+          example: 'High-quality wool sweater'
+        price:
+          type: number
+          format: double
+          example: 50
+        count:
+          type: number
+          example: 20
     ProductNotFound:
       type: object
       properties:
