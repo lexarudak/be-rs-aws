@@ -1,0 +1,19 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "fill-tables": "npm run fill-products-table && npm run fill-stocks-table",
+    "fill-products-table": "node dynamoDB/fill-products-table/fill-products-table.js",
+    "fill-stocks-table": "node dynamoDB/fill-stocks-table/fill-stocks-table.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.751.0",
+    "@aws-sdk/lib-dynamodb": "^3.751.0",
+    "aws-sdk": "^2.1692.0",
+    "uuid": "^11.1.0"
+  }
+}
