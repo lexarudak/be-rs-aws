@@ -4,7 +4,7 @@ import { HandlerEvent } from "../utils/types";
 
 export const handler = async (event: HandlerEvent) => {
 	try {
-		const fileName = event?.pathParameters?.name;
+		const fileName = event.queryStringParameters?.name;
 
 		if (!fileName) {
 			return {

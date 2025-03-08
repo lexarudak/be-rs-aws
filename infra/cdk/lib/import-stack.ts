@@ -50,7 +50,7 @@ export class ImportStack extends Stack {
 			},
 		});
 
-		const importFile = api.root.addResource("import").addResource("{name}");
+		const importFile = api.root.addResource("import");
 
 		importFile.addMethod(
 			"GET",
