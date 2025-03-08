@@ -10,6 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "csv-parser": "^3.2.0"
+    "@aws-sdk/client-s3": "^3.758.0",
+    "@aws-sdk/credential-providers": "^3.758.0",
+    "@aws-sdk/s3-request-presigner": "^3.758.0",
+    "@smithy/protocol-http": "^5.0.1",
+    "@smithy/url-parser": "^4.0.1",
+    "csv-parser": "^3.2.0",
+    "fast-xml-parser": "^5.0.8"
   }
 }
