@@ -31,10 +31,10 @@ export class ImportStack extends Stack {
 
 		importFileParser.addToRolePolicy(
 			new PolicyStatement({
-				actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"], // Разрешения для копирования, удаления и чтения
+				actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
 				resources: [
-					`${importBucket.bucketArn}/uploaded/*`, // Чтение из папки "uploaded"
-					`${importBucket.bucketArn}/parsed/*`, // Запись в папку "parsed"
+					`${importBucket.bucketArn}/uploaded/*`,
+					`${importBucket.bucketArn}/parsed/*`,
 				],
 			})
 		);

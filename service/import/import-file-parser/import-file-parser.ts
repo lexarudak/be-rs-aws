@@ -1,12 +1,9 @@
 import { S3Event } from "aws-lambda";
-import {
-	S3Client,
-	GetObjectCommand,
-	CopyObjectCommand,
-	DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
-import csvParser from "csv-parser";
-import { Readable } from "stream";
+import { S3Client } from "@aws-sdk/client-s3";
+import parsStream from "../utils/pars-stream";
+import getStream from "../utils/get-stream";
+import copyData from "../utils/copy-data";
+import deleteData from "../utils/delete-data";
 
 const s3Client = new S3Client({ region: "eu-north-1" });
 
@@ -18,51 +15,17 @@ export const handler = async (event: S3Event) => {
 		const Bucket = s3.bucket.name;
 		const Key = s3.object.key;
 
-		const getObjectCommand = new GetObjectCommand({
-			Bucket,
-			Key,
-		});
+		const readableStream = await getStream(Bucket, Key, s3Client);
 
-		const response = await s3Client.send(getObjectCommand);
-		const stream = response.Body;
-
-		if (!stream) {
-			throw new Error("Stream is empty");
-		}
-
-		const readableStream = stream as unknown as Readable;
-
-		await new Promise<void>((resolve, reject) => {
-			readableStream
-				.pipe(csvParser())
-				.on("data", (data) => {
-					console.log("Parsed record:", data);
-				})
-				.on("end", () => {
-					console.log("CSV file successfully parsed.");
-					resolve();
-				})
-				.on("error", (error) => {
-					console.error("Error parsing CSV file:", error);
-					reject(error);
-				});
-		});
+		await parsStream(readableStream);
 
 		const parsedKey = Key.replace("uploaded/", "parsed/");
 
-		const copyObjectCommand = new CopyObjectCommand({
-			Bucket,
-			CopySource: `${Bucket}/${Key}`,
-			Key: parsedKey,
-		});
-		await s3Client.send(copyObjectCommand);
+		await copyData(Bucket, Key, parsedKey, s3Client);
+
 		console.log(`File successfully copied to: ${parsedKey}`);
 
-		const deleteObjectCommand = new DeleteObjectCommand({
-			Bucket,
-			Key,
-		});
-		await s3Client.send(deleteObjectCommand);
+		await deleteData(Bucket, Key, s3Client);
 		console.log(`File successfully deleted from: ${Key}`);
 	} catch (error) {
 		console.error("Error processing S3 event:", error);
