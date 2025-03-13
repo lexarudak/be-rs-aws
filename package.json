@@ -5,10 +5,15 @@
   "main": "index.js",
   "scripts": {
     "install:all": "npm install && cd infra/cdk && npm install && cd ../../service/product && npm install",
-    "deploy": "cd infra/cdk && npm run build && cdk deploy",
+    "deploy:products": "cd infra/cdk && npm run build && cdk deploy BackStack",
+    "deploy:import": "cd infra/cdk && npm run build && cdk deploy ImportStack",
+    "deploy:all": "cd infra/cdk && npm run build && cdk deploy --all",
     "swagger": "cd service/product && node swagger.js",
-    "test": "cd service/product && npm run test",
-    "fill-tables": "cd infra/scripts && npm run fill-tables"
+    "test:product": "cd service/product && npm run test",
+    "test:import": "cd service/import && npm run test",
+    "test": "npm run test:product && npm run test:import",
+    "fill-tables": "cd infra/scripts && npm run fill-tables",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",

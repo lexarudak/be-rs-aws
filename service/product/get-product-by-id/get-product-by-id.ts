@@ -19,6 +19,7 @@ export const handler = async (event: HandlerEvent) => {
 			fetchItemById(DYNAMO_DB_TABLES.STOCKS, { product_id: id }),
 		]);
 
+		console.log({ stocksItem });
 		if (!productItem || !stocksItem) {
 			return RESPONSE.NOT_FOUND;
 		}
