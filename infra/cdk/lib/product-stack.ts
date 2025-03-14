@@ -7,10 +7,20 @@ import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { DYNAMO_DB_TABLES } from "../utils/constants";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { Topic } from "aws-cdk-lib/aws-sns";
+import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 export class BackStack extends Stack {
 	constructor(scope: Construct, id: string, props?: StackProps) {
 		super(scope, id, props);
+
+		const createProductTopic = new Topic(this, "CreateProductTopic", {
+			displayName: "Product Creation Notifications",
+		});
+
+		createProductTopic.addSubscription(
+			new EmailSubscription("lexarudak2@gmail.com")
+		);
 
 		const productsTable = Table.fromTableName(
 			this,
@@ -46,6 +56,7 @@ export class BackStack extends Stack {
 				environment: {
 					PRODUCTS_TABLE_NAME: DYNAMO_DB_TABLES.PRODUCTS,
 					STOCKS_TABLE_NAME: DYNAMO_DB_TABLES.STOCKS,
+					CREATE_PRODUCT_TOPIC_ARN: createProductTopic.topicArn,
 				},
 			}
 		);
@@ -115,6 +126,8 @@ export class BackStack extends Stack {
 				batchSize: 5,
 			})
 		);
+
+		createProductTopic.grantPublish(catalogBatchProcess);
 
 		productsTable.grantWriteData(catalogBatchProcess);
 		productsTable.grantReadData(getProductsFunction);
