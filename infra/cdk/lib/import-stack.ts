@@ -6,6 +6,7 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications";
+import { Queue } from "aws-cdk-lib/aws-sqs";
 
 export class ImportStack extends Stack {
 	constructor(scope: Construct, id: string, props?: StackProps) {
@@ -18,6 +19,12 @@ export class ImportStack extends Stack {
 			bucketName
 		);
 
+		const catalogItemsQueue = Queue.fromQueueArn(
+			this,
+			"CatalogItemsQueue",
+			"arn:aws:sqs:eu-north-1:108782060406:catalogItemsQueue"
+		);
+
 		const importFileParser = new NodejsFunction(this, "importFileParser", {
 			runtime: Runtime.NODEJS_22_X,
 			entry: "../../service/import/import-file-parser/import-file-parser.ts",
@@ -26,6 +33,9 @@ export class ImportStack extends Stack {
 			timeout: Duration.seconds(30),
 			bundling: {
 				externalModules: ["aws-sdk"],
+			},
+			environment: {
+				CATALOG_ITEMS_QUEUE_URL: catalogItemsQueue.queueUrl,
 			},
 		});
 
@@ -38,6 +48,8 @@ export class ImportStack extends Stack {
 				],
 			})
 		);
+
+		catalogItemsQueue.grantSendMessages(importFileParser);
 
 		importBucket.addEventNotification(
 			EventType.OBJECT_CREATED,
@@ -88,7 +100,5 @@ export class ImportStack extends Stack {
 			"GET",
 			new apigateway.LambdaIntegration(importProductsFile)
 		);
-
-		importFile;
 	}
 }
