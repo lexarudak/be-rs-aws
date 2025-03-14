@@ -7,7 +7,7 @@ import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { DYNAMO_DB_TABLES } from "../utils/constants";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { Topic } from "aws-cdk-lib/aws-sns";
+import { SubscriptionFilter, Topic } from "aws-cdk-lib/aws-sns";
 import { EmailSubscription } from "aws-cdk-lib/aws-sns-subscriptions";
 
 export class BackStack extends Stack {
@@ -20,6 +20,16 @@ export class BackStack extends Stack {
 
 		createProductTopic.addSubscription(
 			new EmailSubscription("lexarudak2@gmail.com")
+		);
+
+		createProductTopic.addSubscription(
+			new EmailSubscription("lexarudak@gmail.com", {
+				filterPolicy: {
+					title: SubscriptionFilter.stringFilter({
+						allowlist: ["valera"],
+					}),
+				},
+			})
 		);
 
 		const productsTable = Table.fromTableName(
