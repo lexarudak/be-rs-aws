@@ -9,6 +9,9 @@ import { fetchAllItems } from "../helpers/fetch-all-items/fetch-all-items";
 describe("get-products-list handler", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, "log").mockImplementation(() => {});
+		jest.spyOn(console, "error").mockImplementation(() => {});
+  	jest.spyOn(console, "warn").mockImplementation(() => {}); 
   });
 
   it("should return a 200 status code and the correct data", async () => {

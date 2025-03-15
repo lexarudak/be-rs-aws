@@ -8,6 +8,9 @@ const mockFetchItemById = jest.spyOn(fetchItemByIdModule, "fetchItemById");
 describe("get-product-by-id", () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+		jest.spyOn(console, "log").mockImplementation(() => {});
+		jest.spyOn(console, "error").mockImplementation(() => {});
+  	jest.spyOn(console, "warn").mockImplementation(() => {}); 
 	});
 
 	it("should return 200 and the product when the product is found", async () => {
