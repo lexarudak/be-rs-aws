@@ -1,16 +1,30 @@
-import { Stack, StackProps, Duration } from "aws-cdk-lib";
+import { Stack, StackProps, Duration, Fn } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Bucket, EventType } from "aws-cdk-lib/aws-s3";
 import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications";
 import { Queue } from "aws-cdk-lib/aws-sqs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
+
+interface ImportStackProps extends StackProps {
+	authArnOutput: string;
+}
 
 export class ImportStack extends Stack {
-	constructor(scope: Construct, id: string, props?: StackProps) {
+	constructor(scope: Construct, id: string, props: ImportStackProps) {
 		super(scope, id, props);
+
+		const { authArnOutput } = props;
+
+		const basicAuthorizerArn = Fn.importValue(authArnOutput);
+		const basicAuthorizerLambda = lambda.Function.fromFunctionArn(
+			this,
+			"ImportedBasicAuthorizer",
+			basicAuthorizerArn
+		);
 
 		const bucketName = "rs-aws-import";
 		const importBucket = Bucket.fromBucketName(
@@ -96,11 +110,23 @@ export class ImportStack extends Stack {
 			},
 		});
 
+		const authorizer = new apigateway.TokenAuthorizer(
+			this,
+			"LambdaAuthorizer",
+			{
+				handler: basicAuthorizerLambda, // Подключаем импортированную Lambda как обработчик
+			}
+		);
+
 		const importFile = api.root.addResource("import");
 
 		importFile.addMethod(
 			"GET",
-			new apigateway.LambdaIntegration(importProductsFile)
+			new apigateway.LambdaIntegration(importProductsFile),
+			{
+				authorizer,
+				authorizationType: apigateway.AuthorizationType.CUSTOM,
+			}
 		);
 	}
 }
