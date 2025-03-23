@@ -36,7 +36,7 @@ export const handler = async (
 
 		if (!authorizationHeader) {
 			console.error("No Authorization Header found.");
-			return generatePolicy("user", "Deny", event.methodArn);
+			throw new Error("Unauthorized");
 		}
 
 		const encodedCredentials = authorizationHeader.split(" ")[1];
