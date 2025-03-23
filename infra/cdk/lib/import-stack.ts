@@ -120,6 +120,34 @@ export class ImportStack extends Stack {
 
 		const importFile = api.root.addResource("import");
 
+		api.addGatewayResponse("Unauthorized", {
+			type: apigateway.ResponseType.UNAUTHORIZED,
+			statusCode: "401",
+			responseHeaders: {
+				"Access-Control-Allow-Origin": "'*'",
+			},
+			templates: {
+				"application/json": JSON.stringify({
+					message: "Unauthorized",
+					statusCode: 401,
+				}),
+			},
+		});
+
+		api.addGatewayResponse("Forbidden", {
+			type: apigateway.ResponseType.ACCESS_DENIED,
+			statusCode: "403",
+			responseHeaders: {
+				"Access-Control-Allow-Origin": "'*'",
+			},
+			templates: {
+				"application/json": JSON.stringify({
+					message: "Forbidden",
+					statusCode: 403,
+				}),
+			},
+		});
+
 		importFile.addMethod(
 			"GET",
 			new apigateway.LambdaIntegration(importProductsFile),
