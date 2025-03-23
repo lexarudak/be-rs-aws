@@ -114,7 +114,7 @@ export class ImportStack extends Stack {
 			this,
 			"LambdaAuthorizer",
 			{
-				handler: basicAuthorizerLambda, // Подключаем импортированную Lambda как обработчик
+				handler: basicAuthorizerLambda,
 			}
 		);
 

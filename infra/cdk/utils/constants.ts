@@ -6,7 +6,3 @@ export enum DYNAMO_DB_TABLES {
 export enum REGIONS {
 	DYNAMO_DB = "eu-north-1",
 }
-
-export enum AUTH {
-	login = "lexarudak",
-}

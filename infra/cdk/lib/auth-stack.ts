@@ -38,7 +38,7 @@ export class AuthStack extends Stack {
 		);
 
 		authorizerFunction.addPermission("ApiGatewayInvokePermission", {
-			principal: new ServicePrincipal("apigateway.amazonaws.com"), // API Gateway
+			principal: new ServicePrincipal("apigateway.amazonaws.com"),
 			sourceArn: `arn:aws:execute-api:${this.region}:${this.account}:*`,
 		});
 

@@ -29,7 +29,6 @@ export const handler = async (
 	console.log("Authorization event:", event);
 
 	try {
-		// Извлекаем заголовок `Authorization` из запроса
 		const authorizationHeader =
 			event.authorizationToken ||
 			event.headers?.Authorization ||
@@ -40,8 +39,7 @@ export const handler = async (
 			return generatePolicy("user", "Deny", event.methodArn);
 		}
 
-		// Основная логика авторизации по Basic Auth
-		const encodedCredentials = authorizationHeader.split(" ")[1]; // "Basic <base64-credentials>"
+		const encodedCredentials = authorizationHeader.split(" ")[1];
 		const decodedCredentials = Buffer.from(
 			encodedCredentials,
 			"base64"
